@@ -273,10 +273,61 @@ g + theme_light(
 #if you want to set a theme globally: 
 ## theme_set(theme_light())
 
+## Playing with fonts
 library(systemfonts)
 system_fonts() %>%
   filter(str_detect(family, "Cabinet")) %>%
   pull(name) %>%
   sort()
 system_fonts()
+
+g +
+  theme_light(
+    base_size = 18,
+    base_family = "Cabinet Grotesk Black"
+  )
+
+g + 
+  theme_light(
+    base_size = 14,
+    base_family = "Roboto Condensed"
+  )
+
+# Theme settings can be overwritten for more control over plot appearance:
+g +
+  theme(
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold"),
+    legend.position = "none", ## could be "top", "bottom", etc.
+    plot.title.position = "panel" ## "plot" or "panel"; panel default
+  )
+
+# Settings can be overwritten globally if you want to preserve custom appearance:
+##theme_update(
+##  panel.grid.minor = element_blank(),
+##  plot.title = element_text(face = "bold"),
+##  legend.position = "top",
+##  plot.title.position = "plot"
+##)
+
+##g
+
+## Save your plot!
+ggsave("my_plot.png", width = 8, height = 5, dpi = 600)
+ggsave("my_plot.pdf", width = 20, height = 12, unit = "cm", device = cairo_pdf)
+
+# A lengthier option:
+grDevices::cairo_pdf("my_plot.pdf", width = 10, height = 7)
+g
+dev.off()
+
+# Highlights:
+# 1. each ggplot needs at least data, some aesthetics, and a layer
+# 2. we set constant propeties outside aes()
+# 3. and map data-related properties inside aes()
+# 4. local settings and mappings override global properties
+# 5. grouping allows applying layers for subsets
+# 6. we can store a ggplot object and extend it afterwards
+# 7. we can change the appearance for all plots with theme_set()
+#and theme_update()
 

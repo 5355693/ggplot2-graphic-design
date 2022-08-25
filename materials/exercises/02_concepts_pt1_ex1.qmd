@@ -40,10 +40,44 @@ bikes
 
 ```{r}
 #| label: plot
-
+bikes %>%
+  filter(day_night == "day" & is_weekend == T) %>%
+ggplot(data = ., aes(x = date, y = count)) + 
+  geom_point(alpha = 0.5
+  ) + labs(
+    y = "No. of reported bikeshares", x = "Date"
+  )
+```
+```{r}
+#| label: plot
+g <-
+  ggplot(
+  data = bikes,
+  aes(x = date, y = count,
+      shape = day_night,
+      color = day_night,
+      group = day_night
+      )
+  ) +
+  geom_point()  + 
+  geom_line() + 
+  labs(
+    x = "Date",
+    y = "Reported bike shares",
+    title = "Bike sharing trends",
+    color = "Time of day:", ##handy trick for relabeling the legend!
+    shape = "Time of day:"
+    ) +
+  theme_dark()
+g
 ```
 
-Add your comments and more code here.
+```{r}
+#| saving a graphic
+
+ggsave(g, filename = "exercise1.pdf", width = 20, height = 12, unit = "cm", device = cairo_pdf)
+```
+
 
 
 <br><br><br>
