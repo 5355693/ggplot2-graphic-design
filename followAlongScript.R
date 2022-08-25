@@ -1,4 +1,7 @@
 library(ggplot2)
+library(dplyr)
+#install.packages("tidyverse")
+library(tidyverse)
 bikes <- readr::read_csv(
   here::here("data", "london-bikes-custom.csv"),
   ## or: "https://raw.githubusercontent.com/z3tt/graphic-design-ggplot2/main/data/london-bikes-custom.csv"
