@@ -331,3 +331,103 @@ dev.off()
 # 7. we can change the appearance for all plots with theme_set()
 #and theme_update()
 
+# Session 2 #
+## Setup ##
+library(tidyverse)
+bikes <- readr::read_csv(
+  here::here("data", "london-bikes-custom.csv"),
+  ## or: "https://raw.githubusercontent.com/z3tt/graphic-design-ggplot2/main/data/london-bikes-custom.csv"
+  col_types = "Dcfffilllddddc"
+)
+
+bikes$season <- forcats::fct_inorder(bikes$season)
+
+theme_set(theme_light(base_size = 14, base_family = "Roboto Condensed"))
+
+theme_update(
+  panel.grid.minor = element_blank(),
+  plot.title = element_text(face = "bold"),
+  legend.position = "top",
+  plot.title.position = "plot"
+)
+
+invisible(Sys.setlocale("LC_TIME","C"))
+
+## Facets ##
+## facets split variables into multiple panels ##
+
+g <-
+  ggplot(
+    bikes,
+    aes(x = temp_feel, y = count,
+        color = season)
+  ) + 
+  geom_point(
+    alpha = 0.3,
+    guide = "none"
+  )
+g
+
+## Wrap facets: ##
+g + 
+  facet_wrap(
+    vars(day_night)
+  )
+
+## Same as: 
+
+g + 
+  facet_wrap(
+    ~day_night
+  )
+
+## You can facet multiple variables:
+
+g + 
+  facet_wrap(
+    ~is_workday + day_night
+  )
+
+## Other options:
+### Force into a single column, rather than a row
+g + facet_wrap(~day_night, ncol = 1)
+
+### Switch the location of the facet title
+g + facet_wrap(~day_night, ncol = 1, strip.position = "bottom")
+
+### Allow scales to float:
+g + facet_wrap(~ day_night, ncol = 1, scales = "free") #every axis floats
+g + facet_wrap(~day_night, ncol = 1, scales = "free_y") # only Y floats, etc.
+
+
+## Grids let you look at 2 variables:
+g + facet_grid(
+  rows = vars(day_night),
+  cols = vars(is_workday)
+)
+
+## Same as:
+g + facet_grid(day_night ~ is_workday)
+
+## Free scales and proportional scaling
+g +
+  facet_grid(
+    day_night ~ is_workday,
+    scales = "free",
+    space = "free"
+  )
+## As with wraps, you can grid multiple variables:
+g + facet_wrap(day_night ~ is_workday + season)
+
+### Assignment: price ~ carat, gridded by cut and clarity, with smooths and points
+
+ggplot(
+  data = diamonds, aes(x = carat, y = price)) + 
+    geom_point(alpha = 0.5, color = "white") + 
+  geom_smooth(method = "lm", color = "red") + 
+  facet_grid(rows = vars(cut),
+             cols = vars(clarity),
+             scales = "free_x",
+             space = "free_x") + 
+  theme_dark(base_size = 14, 
+             base_family = "Roboto Condensed")
