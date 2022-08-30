@@ -431,3 +431,166 @@ ggplot(
              space = "free_x") + 
   theme_dark(base_size = 14, 
              base_family = "Roboto Condensed")
+
+# Scales
+# translate between variable ranges and property ranges
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point()
+
+# this coding implies:
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point() +
+  scale_x_date() +
+  scale_y_continuous() +
+  scale_color_discrete()
+
+# Any of these can be adjusted:
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point() +
+  scale_x_date(
+    name = "Date"
+  ) +
+  scale_y_continuous(
+    name = "Reported bike shares",
+    breaks = 
+      c(0,seq(5000, 30000, by = 2500),40000, 50000)
+  ) +
+  scale_color_viridis_d()
+  #scale_color_brewer()
+
+# Paste in special labels
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point() +
+  scale_x_date(
+    name = "Date",
+    date_breaks = "4 months",
+    date_labels = "%b '%y"
+  ) +
+  scale_y_continuous(
+    name = "Reported bike shares",
+    breaks = 0:4*15000,
+    labels = paste(0:4*15000, "bikes")
+  ) +
+  scale_color_viridis_d()
+#scale_color_brewer()
+my_colors <- c(
+  `winter` = "#3c89d9",
+  `spring` = "#1ec99b",
+  `summer` = "#F7B01B",
+  `autumn` = "#a26e7c"
+)
+
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point() +
+  scale_color_discrete(
+    name = "Season:",
+    type = my_colors
+  )
+
+library(RColorBrewer)
+
+ggplot(
+  bikes,
+  aes(x = date, y = count,
+      color = season)
+) +
+  geom_point() +
+  scale_color_discrete(
+    name = "Season:",
+    type = brewer.pal(
+      n = 4, name = "Dark2"
+    )
+  )
+
+# Discrete data
+ggplot(
+  bikes,
+  aes(x = season, y = count)
+) +
+  geom_boxplot() +
+  scale_x_discrete(
+    name = "Period",
+    labels = c("Dec-Feb", "Mar-May", "Jun-Aug", "Sep-Nov")
+  )
+
+data("diamonds")
+
+ggplot(data = diamonds, 
+       aes(y = price, x = carat)) +
+  geom_point(alpha = 0.5, color = "black") + 
+  geom_smooth(
+    aes(color = cut),
+    method = "lm") +
+  facet_grid(
+    rows = vars(cut),
+    cols = vars(clarity),
+    scales = "free_x",
+    space = "free_x") +
+  scale_y_continuous(
+    breaks = seq(from = 0, to = 25000, by = 5000),
+    labels = paste("$",seq(from = 0, to = 25000, by = 5000))
+  ) + 
+  scale_x_continuous(
+    breaks = seq(from = 0, to = 5, by = 1),
+  ) + 
+  theme(legend.position = "none")
+
+bikes %>%
+  group_by(season) %>%
+  summarize(rentals = sum(count)) %>%
+ggplot(
+  data = .,
+  aes(x = season, y = rentals)) + 
+    geom_point() +
+  geom_segment(aes(x = season, xend = season, y = 0, yend = rentals)) +
+  scale_y_continuous(
+    limits = c(0,7500000)
+  ) +
+  coord_polar(theta = "y") + 
+  theme_void()
+
+
+#Mapping
+countries <- rnaturalearth::ne_countries(
+  returnclass = "sf"
+)
+
+ggplot() +
+  geom_sf(
+    data = countries,
+    color = "#79dfbd",
+    fill = "#28a87d",
+    size = .3
+  )
+
+# Change the projection
+ggplot() +
+  geom_sf(
+    data = countries,
+    color = "#79dfbd",
+    fill = "#28a87d",
+    size = .3
+  ) +
+  coord_sf(
+    crs = "+proj=moll"
+  )
